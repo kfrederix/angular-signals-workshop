@@ -1,91 +1,122 @@
 ---
-# You can also start simply with 'default'
 theme: seriph
-# random image from a curated Unsplash collection by Anthony
-# like them? see https://unsplash.com/collections/94734566/slidev
-background: https://cover.sli.dev
-# some information about your slides (markdown enabled)
-title: Welcome to Slidev
-info: |
-  ## Slidev Starter Template
-  Presentation slides for developers.
-
-  Learn more at [Sli.dev](https://sli.dev)
-# apply unocss classes to the current slide
-class: text-center
-# https://sli.dev/features/drawing
-drawings:
-  persist: false
-# slide transition: https://sli.dev/guide/animations.html#slide-transitions
+#background: https://cover.sli.dev
+title: Angular Signals
 transition: slide-left
-# enable MDC Syntax: https://sli.dev/features/mdc
-mdc: true
 ---
 
-# Welcome to Slidev
+# Angular Signals
 
-Presentation slides for developers
+<p class="pb-32 opacity-75! text-xl">Concepts, best practices and patterns.</p>
 
-<div class="pt-12">
-  <span @click="$slidev.nav.next" class="px-2 py-1 rounded cursor-pointer" hover="bg-white bg-opacity-10">
-    Press Space for next page <carbon:arrow-right class="inline"/>
-  </span>
+<div class="absolute bottom-8 left-0 w-full opacity-50">
+  <p class="text-sm italic">Presented with ❤️ by Grizzly devs</p>
 </div>
-
-<div class="abs-br m-6 flex gap-2">
-  <button @click="$slidev.nav.openInEditor()" title="Open in Editor" class="text-xl slidev-icon-btn opacity-50 !border-none !hover:text-white">
-    <carbon:edit />
-  </button>
-  <a href="https://github.com/slidevjs/slidev" target="_blank" alt="GitHub" title="Open in GitHub"
-    class="text-xl slidev-icon-btn opacity-50 !border-none !hover:text-white">
-    <carbon-logo-github />
-  </a>
-</div>
-
-<!--
-The last comment block of each slide will be treated as slide notes. It will be visible and editable in Presenter Mode along with the slide. [Read more in the docs](https://sli.dev/guide/syntax.html#notes)
--->
-
----
-transition: fade-out
----
-
-# What is Slidev?
-
-Slidev is a slides maker and presenter designed for developers, consist of the following features
-
-- 📝 **Text-based** - focus on the content with Markdown, and then style them later
-- 🎨 **Themable** - themes can be shared and re-used as npm packages
-- 🧑‍💻 **Developer Friendly** - code highlighting, live coding with autocompletion
-- 🤹 **Interactive** - embed Vue components to enhance your expressions
-- 🎥 **Recording** - built-in recording and camera view
-- 📤 **Portable** - export to PDF, PPTX, PNGs, or even a hostable SPA
-- 🛠 **Hackable** - virtually anything that's possible on a webpage is possible in Slidev
-<br>
-<br>
-
-Read more about [Why Slidev?](https://sli.dev/guide/why)
-
-<!--
-You can have `style` tag in markdown to override the style for the current page.
-Learn more: https://sli.dev/features/slide-scope-style
--->
 
 <style>
 h1 {
   background-color: #2B90B6;
-  background-image: linear-gradient(45deg, #4EC5D4 10%, #146b8c 20%);
+  background-image: linear-gradient(45deg, #FA2C04 0%, #0546FF 100%);
   background-size: 100%;
   -webkit-background-clip: text;
   -moz-background-clip: text;
   -webkit-text-fill-color: transparent;
   -moz-text-fill-color: transparent;
+  font-size: 5rem !important;
+  line-height: 2 !important;
 }
 </style>
 
-<!--
-Here is another comment.
--->
+
+---
+transition: fade-out
+---
+
+# What is a signal?
+
+Let's start with a definition.
+
+<div v-click>
+  <p>A <span v-mark.red="+1">reactive</span> value which notifies consumers of any changes.</p>
+</div>
+
+<div v-click>
+  <p>Signals are <span v-mark.red="+2">functions</span> which return their current value.</p>
+</div>
+
+<div v-click>
+  <p>To access the current value of a signal: <span v-mark.red="+3">call it</span>.</p>
+</div>
+
+<br>
+
+<v-click>
+
+````md magic-move
+```ts {1|4}{lines:true}
+import { signal } from '@angular/core';
+
+export class MyComponent {
+  project = signal('Grizzly'); // WritableSignal<string>
+}
+```
+```ts {6}{lines:true}
+import { signal } from '@angular/core';
+
+@Component({
+  template: `
+    I am currently working on:
+    {{ project() }}
+  `,
+})
+export class MyComponent {
+  project = signal('Grizzly'); // WritableSignal<string>
+}
+```
+````
+
+</v-click>
+
+---
+transition: slide-left
+---
+
+# Why do we need it?
+
+Local change detection.
+
+<div v-click>
+  Angular can <span v-mark.red="+1">track</span> where the signal is used.
+</div>
+
+<div v-click>
+  By <span v-mark.red="+2">reacting</span> to the Signals, Angular knows exactly <span v-mark.red="+3">when and what to update</span>.
+</div>
+
+<br>
+
+<div v-click="4" class="text-sm opacity-50">
+  => Unlocks <span class="italic">Local Change Detection</span>: Angular knows exactly which components should be re-rendered.
+</div>
+
+<br>
+
+
+```ts {1,4,7,11}{lines:true}
+import { signal } from '@angular/core';
+
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    I am currently working on:
+    {{ project() }}
+  `,
+})
+export class MyComponent {
+  project = signal('Grizzly'); // WritableSignal<string>
+}
+```
+
 
 ---
 transition: slide-up
