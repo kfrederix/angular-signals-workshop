@@ -1,0 +1,21 @@
+{
+  "name": "slides",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/slides",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "slidev build --out ../../dist/slides",
+        "cwd": "apps/slides"
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "slidev --open"
+      }
+    }
+  }
+}
