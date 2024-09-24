@@ -1,5 +1,7 @@
 # Basics
 
+No suprises here: we're going to start easy with the basics, and then build up from there.
+
 ## Run app
 
 ```bash
