@@ -9,3 +9,4 @@ This is an Nx monorepo containing several mini Angular apps. Each of these apps 
 ## Lessons
 
 1. [Basics](./apps/01-basics/)
+2. [Derived values](./apps/02-derived-values/)
