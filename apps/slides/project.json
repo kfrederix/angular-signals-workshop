@@ -14,7 +14,8 @@
     "serve": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "slidev --open"
+        "command": "slidev --open",
+        "cwd": "apps/slides"
       }
     }
   }
