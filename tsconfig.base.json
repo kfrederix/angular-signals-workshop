@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@angular-signals-workshop/shared-ng-ui": ["libs/shared-ng/ui/src/index.ts"]
+      "@angular-signals-workshop/shared-ng-ui/*": ["libs/shared-ng/ui/src/lib/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]
