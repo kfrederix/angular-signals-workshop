@@ -228,24 +228,59 @@ pnpm start basics
 transition: slide-left
 ---
 
-# Derived Values
+# Reactive Derived Values
 
-What if we need _reactive_ derived values?
+Signals are cool, but _derived signals_ are even better 😎
+
+<p class="text-sm">What if we need a <span class="italic">derived</span> value that is always up-to-date when the signal changes?</p>
 
 
-```ts {1,4,7,11}{lines:true}
-import { signal } from '@angular/core';
+````md magic-move {at:1, lines:true}
+```ts {1-4|1-5,8}
+counter: WritableSignal<number> = signal(0);
 
-@Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    I am currently working on:
-    {{ project() }}
-  `,
-})
-export class MyComponent {
-  project = signal('Grizzly'); // WritableSignal<string>
+// DERIVED from this.counter
+doubleCount: Signal<number> = computed(() => this.counter() * 2);
+
+increment() {
+  console.log(`Updating counter...`)
+  this.counter.update((currentCount) => currentCount + 1 );
 }
+
+```
+````
+
+
+---
+transition: slide-left
+---
+
+# Reactive Derived Values - Pitfall
+
+Watch out with conditional logic inside `computed()`
+
+<p class="text-sm">When initial execution of computed function does not read the signal, Angular can not track it.</p>
+
+
+```ts {1-12}{lines: true}
+counter = signal(0);
+shouldDouble = false;
+
+// does NOT work
+doubleCountOrZero = computed(() => {
+  if (!shouldDouble) {
+    // in this case: no signal was read
+    // so Angular does not know that this fn depends on count()
+    return 0;
+  }
+  return this.count() * 2;
+});
+
+increment() {
+  console.log(`Updating counter...`)
+  this.counter.update((currentCount) => currentCount + 1 );
+}
+
 ```
 
 
@@ -275,6 +310,29 @@ apps
 
 ```bash
 pnpm start derived-values
+```
+
+---
+transition: slide-left
+---
+
+# Side-Effects
+
+Execute some logic when one or more signal values change.
+
+<p class="text-md">Effects always run at least once.</p>
+
+<p class="text-sm">When an effect runs, it tracks any signal value reads.</p>
+
+<p class="text-sm">Effects always execute asynchronously, during the change detection process.</p>
+
+
+```ts {*}{lines: true}
+effect(() => {
+  // runs immediately, PLUS each time when count changes
+  console.log(`The current count is: ${count()}`);
+});
+
 ```
 
 
