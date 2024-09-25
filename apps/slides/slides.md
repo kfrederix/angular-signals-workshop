@@ -83,20 +83,20 @@ transition: slide-left
 
 # Why do we need it?
 
-Local change detection.
+This question inevitably leads us to the topic of Change Detection.
 
 <div v-click>
   Angular can <span v-mark.red="+1">track</span> where the signal is used.
 </div>
 
 <div v-click>
-  By <span v-mark.red="+2">reacting</span> to the Signals, Angular knows exactly <span v-mark.red="+3">when and what to update</span>.
+  By <span v-mark.red="+2">reacting</span> to the Signals, Angular knows exactly <span v-mark.red="+3">what to update and when</span>.
 </div>
 
 <br>
 
-<div v-click="4" class="text-sm opacity-50">
-  => Unlocks <span class="italic">Local Change Detection</span>: Angular knows exactly which components should be re-rendered.
+<div v-click="4">
+  🔓 <span v-mark.red="+4" class="text-lg font-bold">Local Change Detection</span>: <span class="text-sm">Angular knows exactly which components should be re-rendered.</span>
 </div>
 
 <br>
@@ -115,6 +115,166 @@ import { signal } from '@angular/core';
 export class MyComponent {
   project = signal('Grizzly'); // WritableSignal<string>
 }
+```
+
+---
+transition: slide-left
+---
+
+# Modify Signal Value
+
+How to modify the value of a signal?
+
+A `WritableSignal` can be updated with a new value in 2 ways:
+
+<v-click>
+
+#### 1. Directly set the signal to a new value
+
+````md magic-move {lines:true}
+```ts {*|5|none|none}
+selectedItemId = signal(0);
+
+selectItem(id: string) {
+  console.log(`Updating selected item...`)
+  this.selectedItemId.set(id);
+}
+
+```
+````
+
+</v-click>
+
+<br>
+
+<v-click at="3">
+
+#### 2. Update the value based on its current value
+
+````md magic-move {at:4, lines:true}
+```ts {*|5}
+counter = signal(0);
+
+increment() {
+  console.log(`Updating counter...`)
+  this.counter.update((currentCount) => currentCount + 1 );
+}
+
+```
+````
+
+</v-click>
+
+
+---
+transition: slide-left
+---
+
+# Hands-On Time
+
+## Clone repo
+
+To get started, clone the repo:
+
+```bash
+git clone https://github.com/kfrederix/angular-signals-workshop.git
+cd angular-signals-workshop
+pnpm i
+```
+
+[https://github.com/kfrederix/angular-signals-workshop](https://github.com/kfrederix/angular-signals-workshop)
+
+![QR code for Angular Signals Workshop github repo](./images/repo_qr-code.png "Angular Signals Workshop repo")
+
+<style>
+  img[alt="QR code for Angular Signals Workshop github repo"] {
+    height: 150px;
+  }
+</style>
+
+
+---
+transition: slide-left
+---
+
+# Excercise 1 - The Basics
+
+## Instructions
+
+https://github.com/kfrederix/angular-signals-workshop#exercises
+
+The instructions for each exercise can be found in the corresponding `README.md` file in each app folder.
+
+```
+apps
+│
+└── 01-basics
+    │   ...
+    ├── README.md
+    ...
+
+```
+
+<br>
+
+
+## Run app
+
+```bash
+pnpm start basics
+```
+
+---
+transition: slide-left
+---
+
+# Derived Values
+
+What if we need _reactive_ derived values?
+
+
+```ts {1,4,7,11}{lines:true}
+import { signal } from '@angular/core';
+
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    I am currently working on:
+    {{ project() }}
+  `,
+})
+export class MyComponent {
+  project = signal('Grizzly'); // WritableSignal<string>
+}
+```
+
+
+---
+transition: slide-left
+---
+
+# Excercise 2 - Derived Values
+
+## Instructions
+
+https://github.com/kfrederix/angular-signals-workshop#exercises
+
+```
+apps
+│
+└── 02-derived-values
+    │   ...
+    ├── README.md
+    ...
+
+```
+
+<br>
+
+## Run app
+
+```bash
+pnpm start derived-values
 ```
 
 
