@@ -296,6 +296,103 @@ increment() {
 
 ```
 
+---
+transition: slide-left
+---
+
+# Best-Practice Pattern For `computed()`
+
+Avoid suprises (bugs) by applying this pattern.
+
+````md magic-move {lines:true}
+```ts
+counter = signal(0);
+
+doubleCount = computed(() => {
+  // 1. read all signals first
+  const count = this.counter();
+
+  // 2. computation here - no more signal reads
+  return count * 2;
+});
+
+```
+```ts
+counter = signal(0);
+
+// OK to skip it for really simple one-liners
+doubleCount = computed(() => this.counter() * 2);
+
+```
+```ts {*|1-2,6-7,9,14}
+// BAD EXAMPLE - NEVER DO THIS!
+reallyAwesomeThing = computed(() => this.reallyAwesomeCalculation());
+
+private reallyAwesomeCalculation() {
+  return [
+    this.firstThing(),
+    this.secondThing(),
+  ]
+  .map((thing) => this.combineWithThirdThing(thing))
+  .reduce((prevResult, currentVal) => prevResult + currentVal, 0);
+}
+
+private combineWithThirdThing(value) {
+  return value * this.thirdThing();
+}
+
+```
+```ts
+// BETTER - MAKE SOURCE SIGNALS EXPLICIT
+reallyAwesomeThing = computed(() => {
+  // 1. read all source signals
+  const firstThing = this.firstThing();
+  const secondThing = this.secondThing();
+  const thirdThing = this.thirdThing();
+
+  // 2. pass plain values as arguments
+  return this.reallyAwesomeCalculation(firstThing, secondThing, thirdThing);
+});
+
+private reallyAwesomeCalculation(firstThing, secondThing, thirdThing) {
+  // NO more signal reads here
+}
+
+```
+```ts
+// BEST - NO ADDITIONAL CLASS METHOD CALLS
+reallyAwesomeThing = computed(() => {
+  // 1. read all the signals
+  const firstThing = this.firstThing();
+  const secondThing = this.secondThing();
+  const thirdThing = this.thirdThing();
+  
+  // 2. computation here - no more signal reads
+  return [firstThing, secondThing]
+    .map((thing) => thing * thirdThing)
+    .reduce((prevResult, currentVal) => prevResult + currentVal, 0);
+});
+
+```
+```ts
+import { reallyAwesomeCalculation } from './awesome-stuff.util';
+
+export class MyCompponent {
+  // BEST - No additional CLASS METHOD calls
+  reallyAwesomeThing = computed(() => {
+    // 1. read all the signals
+    const firstThing = this.firstThing();
+    const secondThing = this.secondThing();
+    const thirdThing = this.thirdThing();
+    
+    // 2. computation here - no more signal reads
+    return reallyAwesomeCalculation(firstThing, secondThing, thirdThing);
+  });
+}
+
+```
+````
+
 
 ---
 transition: slide-left
@@ -879,7 +976,7 @@ Double-click on the draggable elements to edit their positions.
 </v-drag>
 ```
 
-<v-drag pos="641,410,261,_,-15"undefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefined>
+<v-drag pos="641,410,261,_,-15"undefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefined>
   <div text-center text-3xl border border-main rounded>
     Double-click me!
   </div>
