@@ -236,10 +236,12 @@ Signals are cool, but _derived signals_ are even better 😎
 
 
 ````md magic-move {at:1, lines:true}
-```ts {1-4|1-5,8|1-5,8}
+```ts {1-6|1-7,10|1-7,10}
+import { computed, signal } from '@angular/core';
+
 counter: WritableSignal<number> = signal(0);
 
-// DERIVED from this.counter
+// DERIVED from this.counter - NOT writable
 doubleCount: Signal<number> = computed(() => this.counter() * 2);
 
 increment() {
@@ -303,6 +305,8 @@ transition: slide-left
 # Best-Practice Pattern For `computed()`
 
 Avoid suprises (bugs) by applying this pattern.
+
+<br>
 
 ````md magic-move {lines:true}
 ```ts
