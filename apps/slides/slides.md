@@ -236,7 +236,7 @@ Signals are cool, but _derived signals_ are even better 😎
 
 
 ````md magic-move {at:1, lines:true}
-```ts {1-4|1-5,8}
+```ts {1-4|1-5,8|1-5,8}
 counter: WritableSignal<number> = signal(0);
 
 // DERIVED from this.counter
@@ -250,6 +250,17 @@ increment() {
 ```
 ````
 
+<br>
+
+<v-click at="2">
+
+## Extra Features
+
+- Lazy Evaluation - <span class="text-sm opacity-50">only runs when value is read</span>
+- Memoization - <span class="text-sm opacity-50">cached until source signal(s) changed</span>
+
+</v-click>
+
 
 ---
 transition: slide-left
@@ -259,8 +270,10 @@ transition: slide-left
 
 Watch out with conditional logic inside `computed()`
 
-<p class="text-sm">When initial execution of computed function does not read the signal, Angular can not track it.</p>
+<div class="text-sm">When <span v-mark.red="+1">initial execution</span> of computed function does not <span v-mark.red="+1">read the signal</span>,</div>
+<div class="text-sm">Angular can not track it.</div>
 
+<br>
 
 ```ts {1-12}{lines: true}
 counter = signal(0);
@@ -313,27 +326,64 @@ pnpm start derived-values
 ```
 
 ---
-transition: slide-left
+transition: fade-out
 ---
 
-# Side-Effects
+# Effect
 
-Execute some logic when one or more signal values change.
+Execute some side-effects when one or more signal values change.
 
-<p class="text-md">Effects always run at least once.</p>
+- Runs at least once
+- Tracks any signal value reads
+- Executes asynchronously - <span class="text-sm opacity-50">during change detection process</span>
 
-<p class="text-sm">When an effect runs, it tracks any signal value reads.</p>
-
-<p class="text-sm">Effects always execute asynchronously, during the change detection process.</p>
+<br>
 
 
 ```ts {*}{lines: true}
+import { effect } from '@angular/core';
+
 effect(() => {
-  // runs immediately, PLUS each time when count changes
+  // runs on component init, PLUS each time when count changes
   console.log(`The current count is: ${count()}`);
 });
 
 ```
+
+---
+transition: slide-left
+---
+
+# Effect
+
+Rarely needed in most apps. Use with care.
+
+
+## Discouraged
+
+❌ Usage of `effect()` is generally discouraged by Angular team.
+
+💡 First consider if `computed()` could be a better fit.
+
+<v-click>
+
+## Example Use Cases
+
+<br>
+
+- Logging
+- Syncing data with `window.localStorage`
+- Custom DOM behavior - <span class="text-sm opacity-50">like changing background color based on State</span>
+- Custom rendering - <span class="text-sm opacity-50">like drawing on a canvas whenever a signal changes</span>
+
+</v-click>
+
+
+---
+transition: slide-left
+---
+
+
 
 
 ---
