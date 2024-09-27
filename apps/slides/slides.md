@@ -506,8 +506,8 @@ constructor() {
   effect(() => {
     console.log(`Full name is: ${this.fullName()}`);
     // 1. LOG: Full name is: Peter Parker
-    // 2. changeName()
-    // 3. LOG: Full name is: Spider Man
+    // changeName()
+    // 2. LOG: Full name is: Spider Man
   });
 }
 ```

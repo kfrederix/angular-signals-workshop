@@ -18,3 +18,4 @@ pnpm start slides
 
 1. [Basics](./apps/01-basics/)
 2. [Derived values](./apps/02-derived-values/)
+3. [Side-effects](./apps/03-side-effects/)
