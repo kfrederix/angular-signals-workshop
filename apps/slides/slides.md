@@ -514,7 +514,7 @@ constructor() {
 
 ::right::
 
-<div class="h-80 w-80 mt-20 mx-auto">
+<div class="h-80 mt-20 ">
   <img class="block h-full mx-auto" src="./images/diamond_problem.png">
 </div>
 
