@@ -14,7 +14,7 @@ import { map } from 'rxjs/operators';
     <main class="p-6">
       <h1 class="text-xl font-bold mb-4">03 - Side-Effects</h1>
       <section>
-        Sum:
+        Random sum:
         <pre>{{ term1$ | async }} + {{ term2$ | async }} = {{ sum$ | async }}</pre>
 
         <div class="mt-8">
