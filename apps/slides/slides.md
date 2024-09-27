@@ -550,6 +550,139 @@ constructor() {
 
 
 ---
+transition: slide-left
+---
+
+# Inputs & Outputs
+
+OUT with the decorators, IN with the signals.
+
+
+````md magic-move {lines:true}
+```ts
+export class ModernComponent {
+  // optional
+  firstName = input<string>();         // InputSignal<string | undefined>
+  age = input(0);                      // InputSignal<number>
+
+  // required
+  lastName = input.required<string>(); // InputSignal<string>
+
+  // extra options: transform / alias
+  isDisabled = input(false, { transform: booleanAttribute, alias: 'disabled' });
+}
+```
+```ts
+@Component({
+  selector: 'custom-checkbox',
+  template: '<div (click)="toggle()"> ... </div>',
+})
+export class CustomCheckbox {
+  checked = model(false); // ModelSignal<boolean> - Writable!
+
+  toggle() {
+    // While standard inputs are read-only,
+    // you can write directly to model inputs.
+    this.checked.update((isChecked) => !isChecked);
+  }
+}
+```
+```ts
+@Component({
+  selector: 'custom-checkbox',
+  template: '<div (click)="toggle()"> ... </div>',
+})
+export class CustomCheckbox {
+  checked = model(false); // ModelSignal<boolean> - Writable!
+
+  toggle() {
+    // While standard inputs are read-only,
+    // you can write directly to model inputs.
+    this.checked.update((isChecked) => !isChecked);
+  }
+}
+
+@Component({
+  imports: [CustomCheckbox],
+  template: `<custom-checkbox [(checked)]="isChecked"></custom-checkbox>`,
+})
+export class App {
+  // will be updated with new value when toggled from CustomCheckbox
+  protected isChecked = signal(false);
+}
+
+```
+````
+
+
+---
+transition: slide-left
+---
+
+# Model inputs
+
+Two-way binding with signals. Yes, input + output at the same time!
+
+
+````md magic-move {lines:true}
+```ts
+@Component({
+  selector: 'custom-checkbox',
+  template: '<div (click)="toggle()"> ... </div>',
+})
+export class CustomCheckbox {
+  checked = model(false); // ModelSignal<boolean> - Writable!
+
+  toggle() {
+    // While standard inputs are read-only, you can write directly to model inputs.
+    this.checked.update((isChecked) => !isChecked);
+  }
+}
+```
+```ts {10-17}
+export class CustomCheckbox {
+  checked = model(false); // ModelSignal<boolean> - Writable!
+
+  toggle() {
+    // While standard inputs are read-only, you can write directly to model inputs.
+    this.checked.update((isChecked) => !isChecked);
+  }
+}
+
+@Component({
+  imports: [CustomCheckbox],
+  template: `<custom-checkbox [(checked)]="isChecked"></custom-checkbox>`,
+})
+export class App {
+  // will be updated with new value when toggled from CustomCheckbox
+  protected isChecked = signal(false);
+}
+```
+```ts {2-3,11-19}
+export class CustomCheckbox {
+  // This automatically creates an output named "checkedChange".
+  checked = model(false);
+
+  toggle() {
+    // While standard inputs are read-only, you can write directly to model inputs.
+    this.checked.update((isChecked) => !isChecked);
+  }
+}
+
+@Component({
+  imports: [CustomCheckbox],
+  template: `<custom-checkbox (checkedChange)="onCheckedChange($event)"></custom-checkbox>`,
+})
+export class App {
+  onCheckedChange(checked) {
+    console.log(`the checkbox is now ${checked ? 'checked' : 'unchecked'}`);
+  }
+}
+```
+````
+
+
+---
 transition: slide-up
 level: 2
 ---
@@ -1016,7 +1149,7 @@ Learn more: [Mermaid Diagrams](https://sli.dev/features/mermaid) and [PlantUML D
 ---
 foo: bar
 dragPos:
-  square: 718,120,167,_,-16
+  square: NaN,NaN,NaN,NaN
 ---
 
 # Draggable Elements
