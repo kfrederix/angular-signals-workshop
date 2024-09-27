@@ -426,6 +426,7 @@ apps
 pnpm start derived-values
 ```
 
+
 ---
 transition: fade-out
 ---
@@ -478,6 +479,35 @@ Rarely needed in most apps. Use with care.
 - Custom rendering - <span class="text-sm opacity-50">like drawing on a canvas whenever a signal changes</span>
 
 </v-click>
+
+
+---
+transition: slide-left
+---
+
+# Excercise 3 - Side-Effects
+
+## Instructions
+
+https://github.com/kfrederix/angular-signals-workshop#exercises
+
+```
+apps
+│
+└── 03-side-effects
+    │   ...
+    ├── README.md
+    ...
+
+```
+
+<br>
+
+## Run app
+
+```bash
+pnpm start side-effects
+```
 
 
 ---
