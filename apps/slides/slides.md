@@ -52,15 +52,15 @@ Let's start with a definition.
 
 <v-click>
 
-````md magic-move
-```ts {1|4}{lines:true}
+````md magic-move {lines:true}
+```ts {1|4}
 import { signal } from '@angular/core';
 
 export class MyComponent {
   project = signal('Grizzly'); // WritableSignal<string>
 }
 ```
-```ts {6}{lines:true}
+```ts {6}
 import { signal } from '@angular/core';
 
 @Component({
@@ -81,7 +81,7 @@ export class MyComponent {
 transition: slide-left
 ---
 
-# Why do we need it?
+# Why do we need them?
 
 This question inevitably leads us to the topic of Change Detection.
 
@@ -157,7 +157,7 @@ counter = signal(0);
 
 increment() {
   console.log(`Updating counter...`)
-  this.counter.update((currentCount) => currentCount + 1 );
+  this.counter.update((currentCount) => currentCount + 1);
 }
 
 ```
@@ -329,7 +329,7 @@ doubleCount = computed(() => this.counter() * 2);
 
 ```
 ```ts {*|1-2,6-7,9,14}
-// BAD EXAMPLE - NEVER DO THIS!
+// BAD EXAMPLE - AVOID THIS
 reallyAwesomeThing = computed(() => this.reallyAwesomeCalculation());
 
 private reallyAwesomeCalculation() {
@@ -482,9 +482,41 @@ Rarely needed in most apps. Use with care.
 
 ---
 transition: slide-left
+layout: two-cols
 ---
 
+# Glitch-Free Execution
 
+Solving the diamond problem.
+
+```ts {*}{lines:true}
+firstName = signal('Peter');
+lastName = signal('Parker');
+
+fullName = computed(() => 
+  `${this.firstName()} ${this.lastName()}`
+);
+
+changeName() {
+  this.firstName.set('Spider');
+  this.lastName.set('Man');
+}
+
+constructor() {
+  effect(() => {
+    console.log(`Full name is: ${this.fullName()}`);
+    // 1. LOG: Full name is: Peter Parker
+    // 2. changeName()
+    // 3. LOG: Full name is: Spider Man
+  });
+}
+```
+
+::right::
+
+<div class="h-80 w-80 mt-20 mx-auto">
+  <img class="block h-full mx-auto" src="./images/diamond_problem.png">
+</div>
 
 
 ---
@@ -980,7 +1012,7 @@ Double-click on the draggable elements to edit their positions.
 </v-drag>
 ```
 
-<v-drag pos="641,410,261,_,-15"undefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefined>
+<v-drag pos="641,410,261,_,-15"undefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefinedundefined>
   <div text-center text-3xl border border-main rounded>
     Double-click me!
   </div>
