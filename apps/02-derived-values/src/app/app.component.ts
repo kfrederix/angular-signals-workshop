@@ -1,5 +1,5 @@
 import { AswTextInputDirective } from '@angular-signals-workshop/shared-ng-ui/input';
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
 @Component({
   standalone: true,
@@ -16,21 +16,44 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
       <p class="mt-6 text-lg">
         Your first name is:
-        <!-- show first name here -->
+        {{ firstName() }}
       </p>
       <p class="mt-6 text-lg">
         Your last name is:
-        <!-- show last name here -->
+        {{ lastName() }}
       </p>
       <p class="mt-6 text-lg">
         Your initials are:
-        <!-- show initials here -->
+        {{ initials() }}
       </p>
     </main>
   `,
 })
 export class AppComponent {
   fullName = signal('');
+
+  private nameParts = computed(() => {
+    // read signals
+    const fullName = this.fullName();
+    // compute
+    return fullName.split(' ').filter((n) => n.length > 0);
+  });
+
+  firstName = computed(() => this.nameParts()[0] ?? '');
+
+  lastName = computed(() => {
+    // read signals
+    const nameParts = this.nameParts();
+    // compute
+    return nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
+  });
+
+  initials = computed(() => {
+    // read signals
+    const nameParts = this.nameParts();
+    // compute
+    return nameParts.map((n) => `${n[0].toUpperCase()}.`).join('');
+  });
 
   onFullNameChange(event: Event): void {
     const target = event.target as HTMLInputElement;
