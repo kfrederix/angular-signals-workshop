@@ -1,21 +1,17 @@
 import { AswButtonDirective } from '@angular-signals-workshop/shared-ng-ui/button';
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BehaviorSubject, combineLatest } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 
 @Component({
   standalone: true,
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, AswButtonDirective],
+  imports: [AswButtonDirective],
   template: `
     <main class="p-6">
       <h1 class="text-xl font-bold mb-4">03 - Side-Effects</h1>
       <section>
         Random sum:
-        <pre>{{ term1$ | async }} + {{ term2$ | async }} = {{ sum$ | async }}</pre>
+        <pre>{{ term1() }} + {{ term2() }} = {{ sum() }}</pre>
 
         <div class="mt-8">
           <button aswButton (click)="updateSum()">Update</button>
@@ -25,18 +21,18 @@ import { map } from 'rxjs/operators';
   `,
 })
 export class AppComponent {
-  private readonly term1Subject = new BehaviorSubject<number>(this.randomTerm());
-  private readonly term2Subject = new BehaviorSubject<number>(this.randomTerm());
+  readonly term1 = signal(this.randomTerm());
+  readonly term2 = signal(this.randomTerm());
 
-  readonly term1$ = this.term1Subject.asObservable();
-  readonly term2$ = this.term2Subject.asObservable();
-
-  readonly sum$ = combineLatest([this.term1$, this.term2$]).pipe(map(([x, y]) => x + y));
+  readonly sum = computed(() => this.term1() + this.term2());
 
   constructor() {
-    this.sum$.pipe(takeUntilDestroyed()).subscribe((sum) => {
-      const term1 = this.term1Subject.getValue();
-      const term2 = this.term2Subject.getValue();
+    effect(() => {
+      // read signals
+      const term1 = this.term1();
+      const term2 = this.term2();
+      const sum = this.sum();
+      // side-effect
       console.log(`${term1} + ${term2} = ${sum}`);
     });
   }
@@ -46,7 +42,7 @@ export class AppComponent {
   }
 
   updateSum() {
-    this.term1Subject.next(this.randomTerm());
-    this.term2Subject.next(this.randomTerm());
+    this.term1.set(this.randomTerm());
+    this.term2.set(this.randomTerm());
   }
 }
