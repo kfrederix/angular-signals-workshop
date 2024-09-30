@@ -268,6 +268,37 @@ increment() {
 transition: slide-left
 ---
 
+# Reactive Derived Values
+
+<br>
+
+## 2 Rules for `computed()`:
+
+<br>
+
+### 1. Do not modify things
+
+<br>
+
+- No side-effects - <span class="text-sm opacity-75">No mutations of class properties, no `.next()` on Subject's etc...</span>
+- Should be a **pure** function - <span class="text-sm opacity-75">Compute a new result, that's it.</span>
+
+
+<br>
+
+### 2. No asynchronous code
+
+<br>
+
+- No `setTimeout()`
+- No `Promise`
+- Only synchronous code - <span class="text-sm opacity-75">`computed()` can _not_ track asynchronous code</span>
+
+
+---
+transition: slide-left
+---
+
 # Reactive Derived Values - Pitfall
 
 Watch out with conditional logic inside `computed()`
@@ -553,13 +584,14 @@ constructor() {
 transition: slide-left
 ---
 
-# Inputs & Outputs
+# Signal Inputs
 
 OUT with the decorators, IN with the signals.
 
 
-````md magic-move {lines:true}
-```ts
+```ts {*}{lines:true}
+import { input } from '@angular/core';
+
 export class ModernComponent {
   // optional
   firstName = input<string>();         // InputSignal<string | undefined>
@@ -572,47 +604,50 @@ export class ModernComponent {
   isDisabled = input(false, { transform: booleanAttribute, alias: 'disabled' });
 }
 ```
-```ts
-@Component({
-  selector: 'custom-checkbox',
-  template: '<div (click)="toggle()"> ... </div>',
-})
-export class CustomCheckbox {
-  checked = model(false); // ModelSignal<boolean> - Writable!
 
-  toggle() {
-    // While standard inputs are read-only,
-    // you can write directly to model inputs.
-    this.checked.update((isChecked) => !isChecked);
-  }
+
+---
+transition: slide-left
+---
+
+# Outputs
+
+- _Not_ a Signal
+- A direct replacement for the traditional @Output() decorator.
+- Improved type-safety
+
+<br>
+
+
+````md magic-move {lines:true}
+```ts
+import { output } from '@angular/core';
+
+export class ListComponent {
+  itemSelected = output<number>(); // OutputEmitterRef<number>
 }
 ```
-```ts
-@Component({
-  selector: 'custom-checkbox',
-  template: '<div (click)="toggle()"> ... </div>',
-})
-export class CustomCheckbox {
-  checked = model(false); // ModelSignal<boolean> - Writable!
+```ts {2,7}
+import { output } from '@angular/core';
+import { outputFromObservable } from '@angular/core/rxjs-interop';
 
-  toggle() {
-    // While standard inputs are read-only,
-    // you can write directly to model inputs.
-    this.checked.update((isChecked) => !isChecked);
-  }
+export class ListComponent {
+  private readonly itemFacade = inject(ItemFacade);
+
+  itemSelected = outputFromObservable(this.itemFacade.selectedItemId$); // OutputEmitterRef<number>
 }
-
-@Component({
-  imports: [CustomCheckbox],
-  template: `<custom-checkbox [(checked)]="isChecked"></custom-checkbox>`,
-})
-export class App {
-  // will be updated with new value when toggled from CustomCheckbox
-  protected isChecked = signal(false);
-}
-
 ```
 ````
+
+`OutputEmitterRef<T>` has 2 methods: `emit()` and `subscribe()`
+
+
+```ts
+class OutputEmitterRef<T> implements OutputRef<T> {
+  subscribe(callback: (value: T) => void): OutputRefSubscription;
+  emit(value: T): void;
+}
+```
 
 
 ---
@@ -680,6 +715,21 @@ export class App {
 }
 ```
 ````
+
+
+---
+transition: slide-left
+---
+
+# View/Content Queries
+
+
+---
+transition: slide-left
+---
+
+# RxJS Interop
+
 
 
 ---
