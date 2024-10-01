@@ -6,5 +6,5 @@ import { Directive, HostBinding } from '@angular/core';
 })
 export class AswButtonDirective {
   @HostBinding('class')
-  protected tailwindClasses = 'bg-teal-600 text-white py-2 px-4 rounded-md hover:bg-teal-500';
+  protected tailwindClasses = 'bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-500';
 }
