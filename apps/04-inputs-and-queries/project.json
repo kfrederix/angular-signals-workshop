@@ -1,0 +1,85 @@
+{
+  "name": "inputs-and-queries",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/04-inputs-and-queries/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/04-inputs-and-queries",
+        "index": "apps/04-inputs-and-queries/src/index.html",
+        "browser": "apps/04-inputs-and-queries/src/main.ts",
+        "polyfills": [],
+        "tsConfig": "apps/04-inputs-and-queries/tsconfig.app.json",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/04-inputs-and-queries/public"
+          }
+        ],
+        "styles": ["apps/04-inputs-and-queries/src/styles.css"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "port": 4204
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "inputs-and-queries:build:production"
+        },
+        "development": {
+          "buildTarget": "inputs-and-queries:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "inputs-and-queries:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "inputs-and-queries:build",
+        "port": 4204,
+        "staticFilePath": "dist/apps/04-inputs-and-queries/browser",
+        "spa": true
+      }
+    }
+  }
+}
