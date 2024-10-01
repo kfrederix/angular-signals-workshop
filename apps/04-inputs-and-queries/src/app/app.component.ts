@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, viewChild } from '@angular/core';
 import { BooksCarouselComponent } from './books-carousel/books-carousel.component';
 import { CarouselControlComponent } from './books-carousel/carousel-control.component';
 import { books } from './books.data';
@@ -18,13 +18,17 @@ import { books } from './books.data';
         <carousel-control></carousel-control>
       </div>
 
-      <!-- TODO: pass books data into the component -->
-      <books-carousel></books-carousel>
+      <books-carousel [books]="books"></books-carousel>
     </main>
   `,
 })
 export class AppComponent {
   protected readonly books = books;
 
-  // TODO: connect CarouselControlComponent to BooksCarouselComponent
+  private carouselControl = viewChild.required(CarouselControlComponent);
+  private booksCarousel = viewChild.required(BooksCarouselComponent);
+
+  constructor() {
+    effect(() => this.booksCarousel().connectCarouselControl(this.carouselControl()));
+  }
 }

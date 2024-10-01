@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { BookComponent } from './book.component';
 import { Book } from './book.interface';
 import { CarouselControlComponent } from './carousel-control.component';
@@ -12,23 +12,19 @@ import { CarouselControlComponent } from './carousel-control.component';
     <!-- TODO: useful for debugging - remove when everything is working... -->
     <p class="pt-4 font-mono">currentBookIndex: {{ currentBookIndex() }}</p>
 
-    <!-- TODO: pass book data into book component -->
-    <book class="block mt-6 mb-8"></book>
+    <book class="block mt-6 mb-8" [book]="currentBook()"></book>
   `,
 })
 export class BooksCarouselComponent {
+  // Inputs
+  books = input.required<Book[]>();
+
+  // Private/Protected State
   protected currentBookIndex = signal(0);
 
-  // TODO: convert to input
-  books = signal<Book[]>([
-    { title: 'Dummy Title 1', author: 'Dummy Author 1', description: 'Dummy Description 1' },
-    { title: 'Dummy Title 2', author: 'Dummy Author 2', description: 'Dummy Description 2' },
-    { title: 'Dummy Title 3', author: 'Dummy Author 3', description: 'Dummy Description 3' },
-  ]);
-
+  // Derived State
   private lastBookIndex = computed(() => Math.max(0, this.books().length - 1));
-
-  currentBook = computed(() => this.books()[this.currentBookIndex()]);
+  protected currentBook = computed(() => this.books()[this.currentBookIndex()]);
 
   /**
    * A CarouselControlComponent must be connected, for the carousel to work.
