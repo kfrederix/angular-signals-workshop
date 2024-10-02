@@ -690,6 +690,7 @@ export class ModernComponent {
   lastName = input.required<string>(); // InputSignal<string>
 
   // extra options: transform / alias
+  // USAGE: <modern-component disabled />
   isDisabled = input(false, { transform: booleanAttribute, alias: 'disabled' });
 }
 ```
@@ -721,9 +722,14 @@ import { output } from '@angular/core';
 import { outputFromObservable } from '@angular/core/rxjs-interop';
 
 export class ListComponent {
-  private selectedItemId$: Observable<number> = /* ... */;
+  nameFormControl = new FormControl('', [Validators.required]);
 
-  itemSelected = outputFromObservable(this.selectedItemId$); // OutputEmitterRef<number>
+  // OutputEmitterRef<boolean>
+  validChange = outputFromObservable(
+    this.nameFormControl.statusChanges.pipe(
+      map((status) => status === 'VALID'),
+    ),
+  );
 }
 ```
 ````
@@ -825,12 +831,22 @@ import { viewChild } from '@angular/core';
 @Component({
   template: `<div #myEl></div>`,
 })
-export class MyComponent implements AfterViewInit {
+export class MyComponent {
   myEl = viewChild<ElementRef>('myEl'); // Signal<ElementRef | undefined>
+}
+```
+```ts {7-12}
+import { viewChild } from '@angular/core';
+
+@Component({
+  template: `<div #myEl></div>`,
+})
+export class MyComponent implements AfterViewInit {
+  nonExistingEl = viewChild<ElementRef>('nonExistingEl'); // Signal<ElementRef | undefined>
 
   ngAfterViewInit() {
     // Will be undefined in case of no match:
-    effect(() => log(`myEl: `, this.myEl()?.nativeElement));
+    log(`nonExistingEl: `, this.nonExistingEl()?.nativeElement);
   }
 }
 ```
@@ -841,12 +857,12 @@ import { viewChild } from '@angular/core';
   template: `<div #myEl></div>`,
 })
 export class MyComponent implements AfterViewInit {
-  myEl = viewChild.required<ElementRef>('myEl'); // Signal<ElementRef>
+  nonExistingEl = viewChild.required<ElementRef>('nonExistingEl'); // Signal<ElementRef>
 
   ngAfterViewInit() {
     // Error will be thrown in case of no match:
     // NG0951: Child query result is required but no value is available.
-    effect(() => log(`myEl: `, this.myEl().nativeElement));
+    log(`nonExistingEl: `, this.nonExistingEl().nativeElement);
   }
 }
 ```
@@ -859,7 +875,7 @@ transition: slide-left
 
 # Signal-based Queries
 
-View Queries - <span class="text-sm opacity-50">Query elements from component's template.</span>
+1. View Queries - <span class="text-sm opacity-50">Query elements from component's template.</span>
 
 
 ```ts {*}{lines:true}
@@ -875,7 +891,9 @@ books = viewChildren(BookComponent);                   // Signal<readonly BookCo
 
 <br>
 
-Content Queries - <span class="text-sm opacity-50">Query elements projected into component via `<ng-content>`.</span>
+<v-click>
+
+2. Content Queries - <span class="text-sm opacity-50">Query elements projected into component via `<ng-content>`.</span>
 
 ```ts {*}{lines:true}
 // OLD
@@ -887,6 +905,8 @@ title = contentChild.required(TitleComponent); // Signal<TitleComponent>
 titles = contentChildren(TitleComponent);      // Signal<readonly TitleComponent[]>
 ```
 
+</v-click>
+
 <style>
   .slidev-layout h1 + p {
     opacity: 1;
@@ -895,10 +915,83 @@ titles = contentChildren(TitleComponent);      // Signal<readonly TitleComponent
 
 
 ---
+transition: fade-out
+---
+
+# RxJS Interop
+
+Mixing Signals and Observables... is fine!
+
+#### 1. Observable to Signal
+
+```ts {*}{lines:true}
+import { toSignal } from '@angular/core/rxjs-interop';
+
+export class MyComponent {
+  nameFormControl = new FormControl<string>('', {
+    nonNullable: true,
+    validators: [Validators.required],
+  });
+
+  // Signal<boolean>
+  isNameValid = toSignal(
+    this.nameFormControl.statusChanges.pipe(
+      map((status) => status === 'VALID'),
+    ),
+    { initialValue: false },
+  );
+
+  // Easily consume it in computed() - Reactive!
+  isSaveButtonEnabled = computed(() => this.isNameValid() && this.isFormDirty() && ...);
+}
+```
+
+---
+transition: fade-out
+---
+
+# RxJS Interop
+
+Mixing Signals and Observables... is fine!
+
+#### 2. Signal to Observable
+
+```ts {*}{lines:true}
+import { toObservable } from '@angular/core/rxjs-interop';
+
+export class MyComponent {
+  value = input.required<string>(); // InputSignal<string>
+  value$ = toObservable(this.value);
+
+  constructor() {
+    // React to changes in the Signal
+    this.value$.subscribe((val) => log({ val }));
+  }
+}
+```
+
+---
 transition: slide-left
 ---
 
 # RxJS Interop
+
+Mixing Signals and Observables... is fine!
+
+#### 3. Reading a Signal from RxJS operators (non-reactive)
+
+```ts {*}{lines:true}
+export class MyComponent {
+  value = input.required<string>(); // InputSignal<string>
+  
+  save() {
+    this.facade.save().pipe(
+      // Read signal, but DON'T react to it
+      tap(() => log(`saved: ${this.value()}`)),
+    );
+  }
+}
+```
 
 
 ---
@@ -907,12 +1000,14 @@ transition: slide-left
 
 # Sources
 
-Big thanks for all these amazing articles and docs ❤️
+Big thanks for all these amazing articles, docs and utils ❤️
 
 - https://angular.dev
 - https://blog.angular-university.io/angular-signals/
 - https://blog.angular-university.io/angular-viewchild-contentchild/
 - https://dev.to/this-is-angular/angular-signals-everything-you-need-to-know-2b7g
+- https://dev.to/modderme123/super-charging-fine-grained-reactive-performance-47ph
 - https://medium.com/@eugeniyoz/angular-signals-best-practices-9ac837ab1cec
 - https://medium.com/ngconf/local-change-detection-in-angular-410d82b38664
+- https://github.com/ngxtension/ngxtension-platform
 
