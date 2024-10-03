@@ -1250,6 +1250,34 @@ export class MovieComponent {
 ```
 ````
 
+---
+transition: slide-left
+---
+
+# Excercise 5 - Putting it all together
+
+## Instructions
+
+https://github.com/kfrederix/angular-signals-workshop#exercises
+
+```
+apps
+│
+└── 05-fun-with-signals
+    │   ...
+    ├── README.md
+    ...
+
+```
+
+<br>
+
+## Run app
+
+```bash
+pnpm start fun-with-signals
+```
+
 
 
 ---
