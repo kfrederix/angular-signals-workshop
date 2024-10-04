@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { PokemonCardsGridItemComponent } from './cards-grid-item.component';
+import type { PokemonCard } from './entities/pokemon-card.interface';
 
 @Component({
   standalone: true,
@@ -7,7 +8,6 @@ import { PokemonCardsGridItemComponent } from './cards-grid-item.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PokemonCardsGridItemComponent],
   template: `
-    <!--
     @if (cards().length > 0) {
       <div class="grid grid-cols-5 gap-6 max-w-screen-2xl">
         @for (card of cards(); track card.id) {
@@ -17,9 +17,8 @@ import { PokemonCardsGridItemComponent } from './cards-grid-item.component';
     } @else {
       <p class="px-4 py-2 text-lg">No results found.</p>
     }
-    -->
   `,
 })
 export class PokemonCardsGridComponent {
-  // TODO: What do we need here? 🤔
+  cards = input.required<PokemonCard[]>();
 }
