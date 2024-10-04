@@ -10,7 +10,7 @@ transition: slide-left
 <p class="pb-32 opacity-75! text-xl">Concepts, best practices and patterns.</p>
 
 <div class="absolute bottom-8 left-0 w-full opacity-50">
-  <p class="text-sm italic">Presented with ❤️ by Grizzly devs</p>
+  <p class="text-sm italic">Presented with ❤️ for 🐻</p>
 </div>
 
 <style>
@@ -26,6 +26,50 @@ h1 {
   line-height: 2 !important;
 }
 </style>
+
+
+---
+transition: fade-out
+---
+
+# Workshop Goals
+
+Why are we here today?
+
+<v-clicks>
+
+- Make sure every Angular developer feels comfortable with new Signal api's.
+- Share/align on best-practices and pitfalls
+- Deep dive: from basics to advanced concepts
+- Have fun 😄
+
+</v-clicks>
+
+<v-click>
+
+![Let's Get The Party Started (Dwight and Michael dance)](https://j.gifs.com/2R6PGM.gif)
+
+</v-click>
+
+<style>
+  img[alt="Let's Get The Party Started (Dwight and Michael dance)"] {
+    height: 250px;
+  }
+</style>
+
+
+---
+transition: fade-out
+---
+
+# Workshop Format
+
+How does this _work_?
+
+- Alternate between theory (= slides) and practical exercises
+- 5 exercises total
+- Ask questions at any time
+
 
 
 ---
