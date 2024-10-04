@@ -166,6 +166,7 @@ increment() {
 </v-click>
 
 
+
 ---
 transition: slide-left
 ---
@@ -673,6 +674,75 @@ constructor() {
 transition: slide-left
 ---
 
+# Equality Check
+
+Signals don't trigger any reactions (template/computed/effect) when updated with an _equal_ value.
+
+
+````md magic-move {lines:true}
+```ts {*}
+count = signal(0);
+
+effect(() => console.log(`Count: ${count()}`));
+// LOG Count: 0
+
+// ... time passes
+count.set(1);
+// LOG Count: 1
+
+// ... time passes
+count.set(1);
+// (no log)
+
+// ... time passes
+count.set(2);
+// LOG Count: 2
+```
+```ts {*}
+// By default, signals use referential equality (=== comparison)
+thing = signal({ message: 'hello' });
+
+effect(() => console.log(`Message: ${thing().message}`));
+// LOG Message: hello
+
+// ... time passes
+thing.set({ message: 'hi there' });
+// LOG Count: hi there
+
+// ... time passes
+thing.set({ message: 'hi there' });
+// LOG Count: hi there
+
+// ... time passes
+thing.set({ message: 'hi there' });
+// LOG Count: hi there
+```
+```ts {*}
+// import { deepEqual } from '...';
+thing = signal({ message: 'hello' }, { equal: deepEqual });
+
+effect(() => console.log(`Message: ${thing().message}`));
+// LOG Message: hello
+
+// ... time passes
+thing.set({ message: 'hi there' });
+// LOG Count: hi there
+
+// ... time passes
+thing.set({ message: 'hi there' });
+// (no log)
+
+// ... time passes
+thing.set({ message: 'hi there' });
+// (no log)
+```
+````
+
+
+---
+transition: slide-left
+---
+
 # Signal Inputs
 
 OUT with the decorators, IN with the signals.
@@ -690,6 +760,7 @@ export class ModernComponent {
   lastName = input.required<string>(); // InputSignal<string>
 
   // extra options: transform / alias
+  // USAGE: <modern-component disabled />
   isDisabled = input(false, { transform: booleanAttribute, alias: 'disabled' });
 }
 ```
@@ -715,28 +786,29 @@ import { output } from '@angular/core';
 export class ListComponent {
   itemSelected = output<number>(); // OutputEmitterRef<number>
 }
-```
-```ts {2,5,7}
-import { output } from '@angular/core';
-import { outputFromObservable } from '@angular/core/rxjs-interop';
 
-export class ListComponent {
-  private selectedItemId$: Observable<number> = /* ... */;
-
-  itemSelected = outputFromObservable(this.selectedItemId$); // OutputEmitterRef<number>
-}
-```
-````
-
-`OutputEmitterRef<T>` has 2 methods: `emit()` and `subscribe()`
-
-
-```ts
+/*
 class OutputEmitterRef<T> implements OutputRef<T> {
   subscribe(callback: (value: T) => void): OutputRefSubscription;
   emit(value: T): void;
 }
+*/
 ```
+```ts
+import { outputFromObservable } from '@angular/core/rxjs-interop';
+
+export class ListComponent {
+  nameFormControl = new FormControl('', [Validators.required]);
+
+  // OutputEmitterRef<boolean>
+  validChange = outputFromObservable(
+    this.nameFormControl.statusChanges.pipe(
+      map((status) => status === 'VALID'),
+    ),
+  );
+}
+```
+````
 
 
 ---
@@ -825,12 +897,22 @@ import { viewChild } from '@angular/core';
 @Component({
   template: `<div #myEl></div>`,
 })
-export class MyComponent implements AfterViewInit {
+export class MyComponent {
   myEl = viewChild<ElementRef>('myEl'); // Signal<ElementRef | undefined>
+}
+```
+```ts {7-12}
+import { viewChild } from '@angular/core';
+
+@Component({
+  template: `<div #myEl></div>`,
+})
+export class MyComponent implements AfterViewInit {
+  nonExistingEl = viewChild<ElementRef>('nonExistingEl'); // Signal<ElementRef | undefined>
 
   ngAfterViewInit() {
     // Will be undefined in case of no match:
-    effect(() => log(`myEl: `, this.myEl()?.nativeElement));
+    log(`nonExistingEl: `, this.nonExistingEl()?.nativeElement);
   }
 }
 ```
@@ -841,12 +923,12 @@ import { viewChild } from '@angular/core';
   template: `<div #myEl></div>`,
 })
 export class MyComponent implements AfterViewInit {
-  myEl = viewChild.required<ElementRef>('myEl'); // Signal<ElementRef>
+  nonExistingEl = viewChild.required<ElementRef>('nonExistingEl'); // Signal<ElementRef>
 
   ngAfterViewInit() {
     // Error will be thrown in case of no match:
     // NG0951: Child query result is required but no value is available.
-    effect(() => log(`myEl: `, this.myEl().nativeElement));
+    log(`nonExistingEl: `, this.nonExistingEl().nativeElement);
   }
 }
 ```
@@ -859,7 +941,7 @@ transition: slide-left
 
 # Signal-based Queries
 
-View Queries - <span class="text-sm opacity-50">Query elements from component's template.</span>
+1. View Queries - <span class="text-sm opacity-50">Query elements from component's template.</span>
 
 
 ```ts {*}{lines:true}
@@ -875,7 +957,9 @@ books = viewChildren(BookComponent);                   // Signal<readonly BookCo
 
 <br>
 
-Content Queries - <span class="text-sm opacity-50">Query elements projected into component via `<ng-content>`.</span>
+<v-click>
+
+2. Content Queries - <span class="text-sm opacity-50">Query elements projected into component via `<ng-content>`.</span>
 
 ```ts {*}{lines:true}
 // OLD
@@ -886,6 +970,8 @@ Content Queries - <span class="text-sm opacity-50">Query elements projected into
 title = contentChild.required(TitleComponent); // Signal<TitleComponent>
 titles = contentChildren(TitleComponent);      // Signal<readonly TitleComponent[]>
 ```
+
+</v-click>
 
 <style>
   .slidev-layout h1 + p {
@@ -898,7 +984,300 @@ titles = contentChildren(TitleComponent);      // Signal<readonly TitleComponent
 transition: slide-left
 ---
 
+# Excercise 4 - Inputs & Queries
+
+## Instructions
+
+https://github.com/kfrederix/angular-signals-workshop#exercises
+
+```
+apps
+│
+└── 04-inputs-and-queries
+    │   ...
+    ├── README.md
+    ...
+
+```
+
+<br>
+
+## Run app
+
+```bash
+pnpm start inputs-and-queries
+```
+
+
+
+---
+transition: fade-out
+---
+
 # RxJS Interop
+
+Mixing Signals and Observables... is fine!
+
+#### 1. Observable to Signal
+
+
+````md magic-move {lines:true}
+```ts {1,9-13}
+import { toSignal } from '@angular/core/rxjs-interop';
+
+export class MyComponent {
+  nameFormControl = new FormControl<string>('', {
+    nonNullable: true,
+    validators: [Validators.required],
+  });
+
+  // Signal<boolean>
+  isNameValid = toSignal(
+    this.nameFormControl.statusChanges.pipe(map((status) => status === 'VALID')),
+    { initialValue: false }, // 👈 eliminates undefined from the type
+  );
+
+  // Easily consume it in computed() - Reactive!
+  isSaveButtonEnabled = computed(() => this.isNameValid() && this.isFormDirty() && ...);
+}
+```
+```ts {9-13}
+import { toSignal } from '@angular/core/rxjs-interop';
+
+export class MyComponent {
+  nameFormControl = new FormControl<string>('', {
+    nonNullable: true,
+    validators: [Validators.required],
+  });
+
+  // Signal<boolean>
+  isNameValid = toSignal(
+    status$(this.nameFormControl).pipe(map((status) => status === 'VALID')),
+    { requireSync: true }, // 👈 when you are sure the observable can emit immediately
+  );
+
+  // Easily consume it in computed() - Reactive!
+  isSaveButtonEnabled = computed(() => this.isNameValid() && this.isFormDirty() && ...);
+}
+```
+```ts {*}
+import { toSignal } from '@angular/core/rxjs-interop';
+
+export class MyComponent {
+  nameFormControl = new FormControl<string>('', {
+    nonNullable: true,
+    validators: [Validators.required],
+  });
+
+  // Signal<boolean>
+  isNameValid = toSignal(
+    status$(this.nameFormControl).pipe(map((status) => status === 'VALID')),
+    { requireSync: true }, // 👈 when you are sure the observable can emit immediately
+  );
+
+  // Easily consume it in computed() - Reactive!
+  isSaveButtonEnabled = computed(() => this.isNameValid() && this.isFormDirty() && ...);
+}
+```
+````
+
+
+---
+transition: fade-out
+---
+
+# RxJS Interop
+
+Mixing Signals and Observables... is fine!
+
+## Pitfalls when using `toSignal()`
+
+2 things to be aware of:
+
+1. Subscribes immediately <span class="text-sm opacity-75"> - in contrast to e.g. `async` pipe in the template</span>
+2. Subscription remains until destroy <span class="text-sm opacity-75"> - avoid `toSignal()` in shared services</span>
+
+
+<p class="italic">👉 This is by design. Sometimes it's what we want. But we must be aware 🧠.</p>
+
+
+
+---
+transition: fade-out
+---
+
+# RxJS Interop
+
+Mixing Signals and Observables... is fine!
+
+#### 2. Signal to Observable
+
+```ts {*}{lines:true}
+import { toObservable } from '@angular/core/rxjs-interop';
+
+export class MyComponent {
+  value = input.required<string>(); // InputSignal<string>
+  value$ = toObservable(this.value);
+
+  ngOnInit() {
+    // 👇 Reacts to changes in the Signal
+    combineLatest([value$, otherObservable$])
+     .pipe(
+       // ...
+       takeUntilDestroyed(this.destroyRef),
+     )
+     .subscribe(() => {
+       // ...
+     });
+  }
+}
+```
+
+---
+transition: slide-left
+---
+
+# RxJS Interop
+
+Mixing Signals and Observables... is fine!
+
+#### 3. Reading a Signal from RxJS operators (non-reactive)
+
+```ts {*}{lines:true}
+export class MyComponent {
+  value = input.required<string>(); // InputSignal<string>
+  
+  save() {
+    this.facade.save().pipe(
+      // 👇 Read signal value, but DON'T react to it
+      tap(() => log(`saved: ${this.value()}`)),
+    );
+  }
+}
+```
+
+
+---
+transition: slide-left
+---
+
+# What About Asynchronous Data?
+
+How can we use Signals for asynchronously loaded data? 🤔
+
+Let's take this common use case as an example:
+
+````md magic-move {lines:true}
+```ts
+export class MovieComponent {
+  id = input.required<number>();
+
+  // How can we load movie data asynchronously (http), based on id ???
+  movie = /* ... */
+}
+```
+```ts
+export class MovieComponent {
+  id = input.required<number>();
+
+  // How can we load movie data asynchronously (http), based on id ???
+  movie = signal<Movie | undefined>(undefined);
+
+  // SOLUTION 1 - effect()
+  constructor() {
+    effect(
+      () => this.movieFacade.movieById$(this.id()) // 👈 reacts to id signal
+        .subscribe((movieData) => {
+          this.movie.set(movieData); // 👈 update the signal
+        }),
+      // 👇 NG0600: Writing to signals is not allowed in a `computed` or an `effect` by default
+      { allowSignalWrites: true },
+    );
+  }
+}
+```
+```ts
+export class MovieComponent {
+  id = input.required<number>();
+
+  // How can we load movie data asynchronously (http), based on id ???
+  movie = signal<Movie | undefined>(undefined);
+
+  // SOLUTION 1 - effect()
+  constructor() {
+    effect(() => {
+      this.movieFacade.movieById$(this.id())
+        .subscribe((movieData) => {
+          // slightly better, but still imperative 😢
+          untracked(() => this.movie.set(movieData));
+        });
+    });
+  }
+}
+```
+```ts
+export class MovieComponent {
+  id = input.required<number>();
+
+  // How can we load movie data asynchronously (http), based on id ???
+  // SOLUTION 2 - toObservable > switchMap > toSignal
+  movie = toSignal(
+    toObservable(this.id).pipe(
+      switchMap((id) => this.movieFacade.movieById$(this.id$))
+    ),
+  ); // Type: Signal<number | undefined>
+
+  // 😀 declarative!
+  // 🤔 back-and-forth conversion between signal and observable feels weird
+}
+```
+```ts
+import { derivedAsync } from 'ngxtension/derived-async';
+
+export class MovieComponent {
+  id = input.required<number>();
+
+  // How can we load movie data asynchronously (http), based on id ???
+  // SOLUTION 3 - ngxtension/derived-async 😎
+  movie = derivedAsync(() => {
+    const movieId = this.id(); // 👈 reacts to id signal
+    return this.movieFacade.movieById$(movieId); // 👈 Observable or Promise, both are supported
+  ); // Type: Signal<number | undefined>
+
+  // 😀 declarative!
+  // 😎 code looks clean!
+}
+```
+````
+
+---
+transition: slide-left
+---
+
+# Excercise 5 - Putting it all together
+
+## Instructions
+
+https://github.com/kfrederix/angular-signals-workshop#exercises
+
+```
+apps
+│
+└── 05-fun-with-signals
+    │   ...
+    ├── README.md
+    ...
+
+```
+
+<br>
+
+## Run app
+
+```bash
+pnpm start fun-with-signals
+```
+
 
 
 ---
@@ -907,12 +1286,14 @@ transition: slide-left
 
 # Sources
 
-Big thanks for all these amazing articles and docs ❤️
+Big thanks for all these amazing articles, docs and utils ❤️
 
 - https://angular.dev
 - https://blog.angular-university.io/angular-signals/
 - https://blog.angular-university.io/angular-viewchild-contentchild/
 - https://dev.to/this-is-angular/angular-signals-everything-you-need-to-know-2b7g
+- https://dev.to/modderme123/super-charging-fine-grained-reactive-performance-47ph
 - https://medium.com/@eugeniyoz/angular-signals-best-practices-9ac837ab1cec
 - https://medium.com/ngconf/local-change-detection-in-angular-410d82b38664
+- https://github.com/ngxtension/ngxtension-platform
 

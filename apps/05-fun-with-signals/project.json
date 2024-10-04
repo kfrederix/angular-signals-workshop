@@ -1,0 +1,85 @@
+{
+  "name": "fun-with-signals",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "apps/05-fun-with-signals/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/05-fun-with-signals",
+        "index": "apps/05-fun-with-signals/src/index.html",
+        "browser": "apps/05-fun-with-signals/src/main.ts",
+        "polyfills": [],
+        "tsConfig": "apps/05-fun-with-signals/tsconfig.app.json",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/05-fun-with-signals/public"
+          }
+        ],
+        "styles": ["apps/05-fun-with-signals/src/styles.css"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "port": 4205
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "fun-with-signals:build:production"
+        },
+        "development": {
+          "buildTarget": "fun-with-signals:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "buildTarget": "fun-with-signals:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "fun-with-signals:build",
+        "port": 4205,
+        "staticFilePath": "dist/apps/05-fun-with-signals/browser",
+        "spa": true
+      }
+    }
+  }
+}

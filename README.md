@@ -30,3 +30,4 @@ Further instuctions for each exercise can be found in the `README.md` file for e
 2. [Derived Values](./apps/02-derived-values/)
 3. [Side Effects](./apps/03-side-effects/)
 4. [Inputs & Queries](./apps/04-inputs-and-queries/)
+5. [Fun with Signals](./apps/05-fun-with-signals/)

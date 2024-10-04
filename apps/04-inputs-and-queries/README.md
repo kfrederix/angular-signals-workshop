@@ -13,5 +13,8 @@ pnpm start inputs-and-queries
 ## Instructions
 
 The goal for this exercise is to finish a books carousel implementation, using **both** `input()` and `viewChild()`.
+Expected behavior for the carousel is demonstrated below.
 
 _Hint:_ your colleague left some meaningful `TODO` comments in the code...
+
+![Expected behavior for the books carousel](./books_carousel.gif 'Books Carousel Behavior')
