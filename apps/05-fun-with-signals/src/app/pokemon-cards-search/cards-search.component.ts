@@ -2,8 +2,12 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { derivedAsync } from 'ngxtension/derived-async';
 import { injectQueryParams } from 'ngxtension/inject-query-params';
+import { of, type Observable } from 'rxjs';
+import { catchError, map, startWith } from 'rxjs/operators';
+import type { ApiCallState } from './api-call-state.interface';
 import { PokemonApiService } from './api/pokemon-api.service';
 import { PokemonCardsGridComponent } from './cards-grid.component';
+import type { PokemonCard } from './entities/pokemon-card.interface';
 import { LoadingIndicatorComponent } from './loading-indicator.component';
 import { PokemonSearchBarComponent } from './search-bar.component';
 
@@ -42,15 +46,29 @@ export class PokemonCardsSearchComponent {
   protected readonly searchParam = injectQueryParams('search');
 
   // derived state
-  protected readonly searchApiState = derivedAsync(() => this.pokemonApiService.searchCardsByName(this.searchParam() ?? ''), { requireSync: true });
+  protected readonly searchApiState = derivedAsync(() => this.fetchCardsWithApiState(this.searchParam() ?? ''), { requireSync: true });
 
   onSearch(searchValue: string): void {
     this.patchUrlSearchParam(searchValue);
   }
 
   /**
+   * Search for card, with ApiCallState included
+   *
+   * NOTE: This will always emit 2 values:
+   *  - First it will emit { status: 'loading', result: [] } IMMEDIATELY (thanks to the startWith)
+   *  - Then, it will emit the real result with status 'loaded' when api call finished (or an error)
+   */
+  private fetchCardsWithApiState(searchQuery: string): Observable<ApiCallState<PokemonCard[]>> {
+    return this.pokemonApiService.searchCardsByName(searchQuery).pipe(
+      map((cards) => ({ status: 'loaded' as const, result: cards })),
+      startWith({ status: 'loading' as const, result: [] }),
+      catchError((err) => of({ status: 'error' as const, error: err })),
+    );
+  }
+
+  /**
    * Patch the URL query param value
-   * @param searchValue
    */
   private patchUrlSearchParam(searchValue: string): void {
     this.router.navigate([], {
