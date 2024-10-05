@@ -1272,7 +1272,7 @@ export class MovieComponent {
   ); // Type: Signal<number | undefined>
 
   // 😀 declarative!
-  // 🤔 back-and-forth conversion between signal and observable feels weird
+  // 🤔 some juggling between signal and observable, but it's a common approach!
 }
 ```
 ```ts
