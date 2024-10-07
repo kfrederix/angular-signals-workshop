@@ -19,11 +19,15 @@ import { PokemonSearchBarComponent } from './search-bar.component';
 
       @if (cardsQuery.isPending()) {
         <div class="p-2"><loading-indicator /></div>
-      } @else if (cardsQuery.isError()) {
+      }
+
+      @if (cardsQuery.isError()) {
         <p>Error: {{ cardsQuery.error().message }}</p>
-      } @else {
+      }
+
+      @if (cardsQuery.data(); as cards) {
         <!-- We can assume by this point that status === 'success' -->
-        <pokemon-cards-grid [cards]="cardsQuery.data() ?? []" />
+        <pokemon-cards-grid [cards]="cards" />
       }
     </div>
   `,
