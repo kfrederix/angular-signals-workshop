@@ -541,6 +541,8 @@ Rarely needed in most apps. Use with care.
 
 ❌ Usage of `effect()` is generally discouraged by Angular team.
 
+❌ Avoid using effects for propagation of state changes.
+
 💡 First consider if `computed()` could be a better fit.
 
 <v-click>
