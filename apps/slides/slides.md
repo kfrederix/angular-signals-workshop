@@ -361,10 +361,10 @@ shouldDouble = false;
 doubleCountOrZero = computed(() => {
   if (!shouldDouble) {
     // in this case: no signal was read
-    // so Angular does not know that this fn depends on count()
+    // so Angular does not know that this fn depends on counter()
     return 0;
   }
-  return this.count() * 2;
+  return this.counter() * 2;
 });
 
 increment() {
