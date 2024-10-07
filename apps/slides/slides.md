@@ -549,8 +549,6 @@ Rarely needed in most apps. Use with care.
 
 ## Example Use Cases
 
-<br>
-
 - Logging
 - Syncing data with `window.localStorage`
 - Custom DOM behavior - <span class="text-sm opacity-50">like changing background color based on State</span>
