@@ -284,10 +284,10 @@ Signals are cool, but _derived signals_ are even better 😎
 ```ts {1-6|1-7,10|1-7,10}
 import { computed, signal } from '@angular/core';
 
-counter: WritableSignal<number> = signal(0);
+counter = signal(0); // WritableSignal<number>
 
 // DERIVED from this.counter - NOT writable
-doubleCount: Signal<number> = computed(() => this.counter() * 2);
+doubleCount = computed(() => this.counter() * 2); // Signal<number>
 
 increment() {
   log(`Updating counter...`)
