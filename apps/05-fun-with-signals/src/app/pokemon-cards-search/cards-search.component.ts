@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { injectQuery } from '@tanstack/angular-query-experimental';
 import { injectQueryParams } from 'ngxtension/inject-query-params';
-import { switchMap, tap } from 'rxjs/operators';
+import { lastValueFrom } from 'rxjs';
 import { PokemonApiService } from './api/pokemon-api.service';
 import { PokemonCardsGridComponent } from './cards-grid.component';
 import { LoadingIndicatorComponent } from './loading-indicator.component';
@@ -17,10 +17,13 @@ import { PokemonSearchBarComponent } from './search-bar.component';
     <div class="mt-6 flex flex-col gap-4">
       <pokemon-search-bar [initialSearchQuery]="searchParam()" (search)="onSearch($event)" />
 
-      @if (isLoading()) {
+      @if (cardsQuery.isPending()) {
         <div class="p-2"><loading-indicator /></div>
+      } @else if (cardsQuery.isError()) {
+        <p>Error: {{ cardsQuery.error().message }}</p>
       } @else {
-        <pokemon-cards-grid [cards]="cards() ?? []" />
+        <!-- We can assume by this point that status === 'success' -->
+        <pokemon-cards-grid [cards]="cardsQuery.data() ?? []" />
       }
     </div>
   `,
@@ -37,14 +40,13 @@ export class PokemonCardsSearchComponent {
 
   protected isLoading = signal(false);
 
-  // derived state
-  protected readonly cards = toSignal(
-    toObservable(this.searchParam).pipe(
-      tap(() => this.isLoading.set(true)),
-      switchMap((searchQuery) => this.pokemonApiService.searchCardsByName(searchQuery ?? '')),
-      tap(() => this.isLoading.set(false)),
-    ),
-  );
+  protected cardsQuery = injectQuery(() => {
+    const searchQuery = this.searchParam() ?? '';
+    return {
+      queryKey: ['searchCardsByName', searchQuery],
+      queryFn: () => lastValueFrom(this.pokemonApiService.searchCardsByName(searchQuery)),
+    };
+  });
 
   onSearch(searchValue: string): void {
     this.patchUrlSearchParam(searchValue);

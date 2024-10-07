@@ -111,6 +111,9 @@ importers:
       '@swc/helpers':
         specifier: ~0.5.11
         version: 0.5.13
+      '@tanstack/angular-query-experimental':
+        specifier: ^5.59.0
+        version: 5.59.0(@angular/core@18.2.5(rxjs@7.8.1)(zone.js@0.14.10))
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.13
@@ -2671,6 +2674,14 @@ packages:
   '@szmarczak/http-timer@5.0.1':
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
     engines: {node: '>=14.16'}
+
+  '@tanstack/angular-query-experimental@5.59.0':
+    resolution: {integrity: sha512-zqsMybEI9yHA5O83GzT3P5K6Wa4mad5PANWjQ5tY6ztR+uiwLgB5eZPmRlmoAZBejQ80LPrMCeM9xyeLx5ETEw==}
+    peerDependencies:
+      '@angular/core': '>=16.0.0'
+
+  '@tanstack/query-core@5.59.0':
+    resolution: {integrity: sha512-WGD8uIhX6/deH/tkZqPNcRyAhDUqs729bWKoByYHSogcshXfFbppOdTER5+qY7mFvu8KEFJwT0nxr8RfPTVh0Q==}
 
   '@tootallnate/once@2.0.0':
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
@@ -12295,6 +12306,14 @@ snapshots:
   '@szmarczak/http-timer@5.0.1':
     dependencies:
       defer-to-connect: 2.0.1
+
+  '@tanstack/angular-query-experimental@5.59.0(@angular/core@18.2.5(rxjs@7.8.1)(zone.js@0.14.10))':
+    dependencies:
+      '@angular/core': 18.2.5(rxjs@7.8.1)(zone.js@0.14.10)
+      '@tanstack/query-core': 5.59.0
+      tslib: 2.7.0
+
+  '@tanstack/query-core@5.59.0': {}
 
   '@tootallnate/once@2.0.0': {}
 
