@@ -224,6 +224,7 @@ To get started, clone the repo:
 ```bash
 git clone https://github.com/kfrederix/angular-signals-workshop.git
 cd angular-signals-workshop
+# enable pnpm via corepack, if you haven't done that before
 corepack enable pnpm
 pnpm i
 ```
