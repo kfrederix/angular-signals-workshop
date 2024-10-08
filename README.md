@@ -16,7 +16,10 @@ pnpm i
 
 ## Slides
 
-Run this command to start the slides:
+Hosted version of the slides can be [viewed directly here](https://kfrederix.github.io/angular-signals-workshop/).
+
+It's also possible to run the slides locally, in dev mode.
+To do that, run this command:
 
 ```bash
 pnpm start slides
