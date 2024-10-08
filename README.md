@@ -27,6 +27,10 @@ pnpm start slides
 
 ## Exercises
 
+This workshop was designed in a way that you can use the slides to guide you.
+
+By following the slides, you will get a nice learning experience. It will alternate between theoritical parts, and hands-on exercises. The slides will tell you each time when it's time to start an exercise 😊.
+
 Further instuctions for each exercise can be found in the `README.md` file for each app:
 
 1. [Basics](./apps/01-basics/)
@@ -34,3 +38,6 @@ Further instuctions for each exercise can be found in the `README.md` file for e
 3. [Side Effects](./apps/03-side-effects/)
 4. [Inputs & Queries](./apps/04-inputs-and-queries/)
 5. [Fun with Signals](./apps/05-fun-with-signals/)
+
+
+Hope you enjoyed this!
