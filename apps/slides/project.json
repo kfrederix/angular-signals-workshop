@@ -7,7 +7,7 @@
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "slidev build --out ../../dist/slides",
+        "command": "slidev build --base /angular-signals-workshop/ --out ../../dist/slides",
         "cwd": "apps/slides"
       }
     },
