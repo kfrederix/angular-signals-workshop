@@ -40,4 +40,6 @@ Further instuctions for each exercise can be found in the `README.md` file for e
 5. [Fun with Signals](./apps/05-fun-with-signals/)
 
 
-Hope you enjoyed this!
+I hope you will enjoy this!
+
+P.S. Solutions can also be found in a separate branch. These are only 1 way to solve the problems. If you found another solution, great! It might be just as good or even better than mine.
