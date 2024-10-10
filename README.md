@@ -8,7 +8,13 @@ This is an Nx monorepo containing several mini Angular apps. Each of these apps 
 
 ## Getting started
 
-Install dependencies:
+### Prerequisites
+
+You will need Node version >= 20 installed on your system, plus `pnpm`.
+
+The easiest, and preferred, way to install `pnpm` is using corepack: https://pnpm.io/installation#using-corepack.
+
+### Install dependencies:
 
 ```bash
 pnpm i
@@ -29,7 +35,7 @@ pnpm start slides
 
 This workshop was designed in a way that you can use the slides to guide you.
 
-By following the slides, you will get a nice learning experience. It will alternate between theoritical parts, and hands-on exercises. The slides will tell you each time when it's time to start an exercise 😊.
+By following the slides, you will get a nice learning experience. It will alternate between theoritical parts, and hands-on exercises. The slides will tell you when it's time to start an exercise 😊.
 
 Further instuctions for each exercise can be found in the `README.md` file for each app:
 
