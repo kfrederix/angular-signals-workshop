@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { derivedAsync } from 'ngxtension/derived-async';
-import { injectQueryParams } from 'ngxtension/inject-query-params';
 import { of, type Observable } from 'rxjs';
 import { catchError, map, startWith } from 'rxjs/operators';
 import type { ApiCallState } from './api-call-state.interface';
@@ -41,12 +40,13 @@ export class PokemonCardsSearchComponent {
   private readonly router = inject(Router);
   private readonly pokemonApiService = inject(PokemonApiService);
 
-  // inject query param
-  // see: https://ngxtension.netlify.app/utilities/injectors/inject-query-params/
-  protected readonly searchParam = injectQueryParams('search');
+  // query param "search" automatically binds to the input, thanks to: https://angular.dev/api/router/withComponentInputBinding
+  protected readonly searchParam = input<string>('', { alias: 'search' });
 
   // derived state
-  protected readonly searchApiState = derivedAsync(() => this.fetchCardsWithApiState(this.searchParam() ?? ''), { requireSync: true });
+  protected readonly searchApiState = derivedAsync(() => this.fetchCardsWithApiState(this.searchParam() ?? ''), {
+    initialValue: { status: 'loading', result: [] },
+  });
 
   onSearch(searchValue: string): void {
     this.patchUrlSearchParam(searchValue);
